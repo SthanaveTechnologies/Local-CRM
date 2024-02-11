@@ -7,8 +7,11 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Colleges;
 use App\Models\Courses;
+use App\Models\References;
 use App\Models\Subjects;
 use App\Models\Units;
+use App\Models\Topics;
+use Illuminate\Support\Facades\DB;
 
 class notesController extends Controller
 {
@@ -96,6 +99,68 @@ class notesController extends Controller
             return response()->json([
                 'status' => 404,
                 'message' => 'Subject Id required',
+                'error' => true
+            ]);
+        }
+    }
+
+    public function getTopicsByUnitId(Request $request)
+    {
+        if ($request->unitId) {
+            if (Units::where('id', $request->unitId)->count() <= 0) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Unit you are searching not found',
+                    'error' => true
+                ]);
+            }
+
+            $data = Topics::where([
+                'active' => 1,
+                'unit' => $request->unitId
+            ])->get();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'All topics fetched',
+                'error' => false,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Unit Id required',
+                'error' => true
+            ]);
+        }
+    }
+
+    public function getReferencesByTopicId(Request $request)
+    {
+        if ($request->topicId) {
+            if (Topics::where('id', $request->topicId)->count() <= 0) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'Topic you are searching not found',
+                    'error' => true
+                ]);
+            }
+
+            $data = References::where([
+                'active' => 1,
+                'topic' => $request->topicId
+            ])->get();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'All references for the topic fetched',
+                'error' => false,
+                'data' => $data
+            ]);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Topic Id required',
                 'error' => true
             ]);
         }
@@ -236,6 +301,93 @@ class notesController extends Controller
                 'status' => 400,
                 'message' => $th || 'Looks something not good',
                 'error' => true,
+            ]);
+        }
+    }
+
+    public function storeTopics(Request $request)
+    {
+        if (!$request->unitId || !$request->topicName) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'One or more field required',
+                'error' => true
+            ]);
+        }
+        if (Units::where('id', $request->unitId)->count() <= 0) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Unit you are searching not found',
+                'error' => true
+            ]);
+        }
+        try {
+            $id = Str::uuid()->toString();
+            $status = Topics::create([
+                'id' => $id,
+                'name' => $request->topicName,
+                'unit' => $request->unitId,
+                'created_at' => Carbon::now()
+            ]);
+
+            if ($request->references && count($request->references)) {
+
+                $type = DB::table('url_type')->where('name', 'url')->value('id');
+
+                foreach ($request->references as $value) {
+                    References::create([
+                        'id' => Str::uuid()->toString(),
+                        'url' => $value,
+                        'type' => $type,
+                        'topic' => $id,
+                        'created_at' => Carbon::now(),
+                    ]);
+                }
+            }
+
+            if ($status) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'New topic added for this unit',
+                    'error' => false
+                ]);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 400,
+                'message' => $th || 'Looks something not good',
+                'error' => true,
+            ]);
+        }
+    }
+
+    public function storeReferences(Request $request)
+    {
+        if (!$request->topicId || !$request->references) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'One or more field required',
+                'error' => true
+            ]);
+        }
+        if ($request->references && count($request->references)) {
+
+            $type = DB::table('url_type')->where('name', 'url')->value('id');
+
+            foreach ($request->references as $value) {
+                References::create([
+                    'id' => Str::uuid()->toString(),
+                    'url' => $value,
+                    'type' => $type,
+                    'topic' => $request->topicId,
+                    'created_at' => Carbon::now(),
+                ]);
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'References added to this topics',
+                'error' => false
             ]);
         }
     }

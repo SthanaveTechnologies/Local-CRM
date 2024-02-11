@@ -30,3 +30,9 @@ Route::post('/subject', [notesController::class, 'storeSubject']);
 
 Route::get('/units', [notesController::class, 'getUnitsBySubjectId']);
 Route::post('/units', [notesController::class, 'storeUnit']);
+
+Route::get('/topics', [notesController::class, 'getTopicsByUnitId']);
+Route::post('/topics', [notesController::class, 'storeTopics']);
+
+Route::get('/references', [notesController::class, 'getReferencesByTopicId']);
+Route::post('/references', [notesController::class, 'storeReferences']);

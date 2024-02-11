@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Topics extends Model
 {
     use HasFactory;
-    public $table = 'units';
+    public $table = 'topics';
     public $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';  
