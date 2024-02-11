@@ -44,7 +44,6 @@ class notesController extends Controller
     public function getSubjectsByCourseId(Request $request)
     {
         if ($request->courseId) {
-
             if (Courses::where('id', $request->courseId)->count() <= 0) {
                 return response()->json([
                     'status' => 404,
@@ -87,7 +86,7 @@ class notesController extends Controller
             $data = Units::where([
                 'active' => 1,
                 'subject' => $request->subjectId
-            ])->get();
+            ])->orderBy('name', 'ASC')->get();
 
             return response()->json([
                 'status' => 200,
@@ -118,7 +117,10 @@ class notesController extends Controller
             $data = Topics::where([
                 'active' => 1,
                 'unit' => $request->unitId
-            ])->get();
+            ])->get()->map(function ($item) {
+                $item['references'] = $item->references;
+                return $item;
+            });
 
             return response()->json([
                 'status' => 200,

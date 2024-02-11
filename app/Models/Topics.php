@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\References;
 
 class Topics extends Model
 {
@@ -19,4 +20,9 @@ class Topics extends Model
         'unit',
         'created_at',
     ];
+
+    public function references()
+    {
+        return $this->hasMany(References::class, 'topic', 'id');
+    }
 }
