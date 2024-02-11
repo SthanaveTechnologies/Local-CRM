@@ -1,0 +1,36 @@
+{
+    "user1": [
+        {
+            "id": "890",
+            "name": "Rahul soni"
+        },
+        {
+            "id": "462",
+            "name": "Another user"
+        },
+        {
+            "id": "678",
+            "name": "three fou r uydhfkjans",
+            "username": "usermajhdksj",
+            "phone": "+917999585307"
+        }
+    ],
+    "user2": [
+        {
+            "id": "101",
+            "name": "New user"
+        },
+        {
+            "id": "678",
+            "name": "three fou r uydhfkjans",
+            "username": "usermajhdksj"
+        }
+    ],
+    "user3": [
+        {
+            "id": "678",
+            "name": "three fou r uydhfkjans",
+            "username": "usermajhdksj"
+        }
+    ]
+}
