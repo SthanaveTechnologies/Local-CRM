@@ -19,7 +19,7 @@ class notesController extends Controller
     // get data
     public function getColleges(Request $request)
     {
-        $data = Colleges::where('active', 1)->get();
+        $data = Colleges::where('active', 1)->orderBy('created_at', 'ASC')->get();
 
         return response()->json([
             'status' => 200,
@@ -31,7 +31,7 @@ class notesController extends Controller
 
     public function getCourses(Request $request)
     {
-        $data = Courses::where('active', 1)->get();
+        $data = Courses::where('active', 1)->orderBy('created_at', 'ASC')->get();
 
         return response()->json([
             'status' => 200,
@@ -55,7 +55,7 @@ class notesController extends Controller
             $data = Subjects::where([
                 'active' => 1,
                 'course' => $request->courseId
-            ])->get();
+            ])->orderBy('created_at', 'ASC')->get();
 
             return response()->json([
                 'status' => 200,
@@ -117,7 +117,7 @@ class notesController extends Controller
             $data = Topics::where([
                 'active' => 1,
                 'unit' => $request->unitId
-            ])->get()->map(function ($item) {
+            ])->orderBy('created_at', 'ASC')->get()->map(function ($item) {
                 $item['references'] = $item->references;
                 return $item;
             });
@@ -151,7 +151,7 @@ class notesController extends Controller
             $data = References::where([
                 'active' => 1,
                 'topic' => $request->topicId
-            ])->get();
+            ])->orderBy('created_at', 'ASC')->get();
 
             return response()->json([
                 'status' => 200,
